@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="{{ blog_language | default('ja') }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {# ページタイトル #}
+    <title>{% block title %}{{ blog_name }}{% endblock %}</title>
+
+    {# SEO メタタグ #}
+    <meta name="description" content="{% block meta_description %}{{ blog_description }}{% endblock %}">
+    <meta name="author" content="{{ blog_name }}">
+    <link rel="canonical" href="{% block canonical %}{{ blog_url }}{% endblock %}">
+
+    {# OGP (Open Graph Protocol) メタタグ #}
+    <meta property="og:site_name" content="{{ blog_name }}">
+    <meta property="og:title" content="{% block og_title %}{{ blog_name }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ blog_description }}{% endblock %}">
+    <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+    <meta property="og:url" content="{% block og_url %}{{ blog_url }}{% endblock %}">
+    <meta property="og:locale" content="ja_JP">
+
+    {# Twitter Card メタタグ #}
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}{{ blog_name }}{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}{{ blog_description }}{% endblock %}">
+
+    {# RSSフィード #}
+    <link rel="alternate" type="application/rss+xml" title="{{ blog_name }}" href="{{ blog_url }}/feed.xml">
+
+    <!-- Google AdSense -->
+    {{ adsense_head }}
+
+    {# 埋め込みCSS - 量子ブログ用紫テーマ #}
+    <style>
+        /* ===================================
+           リセット・基本設定
+           =================================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* メインカラー（紫テーマ） */
+            --color-primary: #7C3AED;
+            --color-primary-dark: #6D28D9;
+            --color-primary-light: #8B5CF6;
+
+            /* 背景色 */
+            --color-bg: #F5F3FF;
+            --color-bg-card: #FFFFFF;
+            --color-bg-code: #F1F5F9;
+
+            /* 文字色 */
+            --color-text: #1E293B;
+            --color-text-secondary: #64748B;
+            --color-text-light: #94A3B8;
+
+            /* ボーダー */
+            --color-border: #E2E8F0;
+
+            /* その他 */
+            --color-accent: #A78BFA;
+            --color-success: #10B981;
+            --color-danger: #EF4444;
+
+            /* フォント */
+            --font-sans: "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Meiryo", sans-serif;
+            --font-mono: "SFMono-Regular", "Consolas", "Liberation Mono", monospace;
+
+            /* レイアウト */
+            --max-width: 1200px;
+            --content-width: 800px;
+            --sidebar-width: 300px;
+            --header-height: 64px;
+
+            /* 影 */
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+
+            /* 角丸 */
+            --radius-sm: 6px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+        }
+
+        /* ===================================
+           ダークモード
+           =================================== */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-bg: #0F172A;
+                --color-bg-card: #1E293B;
+                --color-bg-code: #334155;
+                --color-text: #F1F5F9;
+                --color-text-secondary: #94A3B8;
+                --color-text-light: #64748B;
+                --color-border: #334155;
+                --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+                --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+                --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+            }
+        }
+
+        /* ===================================
+           タイポグラフィ
+           =================================== */
+        html {
+            font-size: 16px;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            color: var(--color-text);
+            background-color: var(--color-bg);
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.4;
+            margin-bottom: 0.5em;
+        }
+
+        h1 { font-size: 2rem; }
+        h2 { font-size: 1.5rem; }
+        h3 { font-size: 1.25rem; }
+        h4 { font-size: 1.1rem; }
+
+        p { margin-bottom: 1em; }
+
+        a {
+            color: var(--color-primary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: var(--color-primary-dark);
+            text-decoration: underline;
+        }
+
+        img { max-width: 100%; height: auto; }
+
+        code {
+            font-family: var(--font-mono);
+            background: var(--color-bg-code);
+            padding: 0.15em 0.4em;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--color-bg-code);
+            padding: 1em;
+            border-radius: var(--radius-md);
+            overflow-x: auto;
+            margin-bottom: 1.5em;
+        }
+
+        pre code { background: none; padding: 0; }
+
+        blockquote {
+            border-left: 4px solid var(--color-primary);
+            padding: 0.5em 1em;
+            margin: 1em 0;
+            color: var(--color-text-secondary);
+            background: var(--color-bg-code);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1.5em; }
+        th, td { padding: 0.75em 1em; border: 1px solid var(--color-border); text-align: left; }
+        th { background: var(--color-bg-code); font-weight: 600; }
+
+        /* ===================================
+           レイアウト
+           =================================== */
+        .container { max-width: var(--max-width); margin: 0 auto; padding: 0 1.5rem; }
+        .layout-main { display: flex; gap: 2rem; margin-top: 2rem; margin-bottom: 3rem; }
+        .content-area { flex: 1; min-width: 0; }
+        .sidebar { width: var(--sidebar-width); flex-shrink: 0; }
+
+        @media (max-width: 768px) {
+            .layout-main { flex-direction: column; }
+            .sidebar { width: 100%; }
+        }
+
+        /* ===================================
+           ヘッダー
+           =================================== */
+        .site-header {
+            background: var(--color-bg-card);
+            border-bottom: 1px solid var(--color-border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: var(--header-height);
+        }
+
+        .site-logo a {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--color-primary);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+
+        .site-nav {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .site-nav a {
+            color: var(--color-text-secondary);
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .site-nav a:hover {
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        .menu-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--color-text);
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .site-nav {
+                display: none;
+                position: absolute;
+                top: var(--header-height);
+                left: 0; right: 0;
+                background: var(--color-bg-card);
+                flex-direction: column;
+                padding: 1rem;
+                border-bottom: 1px solid var(--color-border);
+                box-shadow: var(--shadow-md);
+            }
+            .site-nav.open { display: flex; }
+        }
+
+        /* ===================================
+           カード
+           =================================== */
+        .card {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+        .card-title a { color: var(--color-text); }
+        .card-title a:hover { color: var(--color-primary); text-decoration: none; }
+
+        .card-meta {
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .card-excerpt { color: var(--color-text-secondary); font-size: 0.95rem; line-height: 1.7; }
+        .card-tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.75rem; }
+
+        /* ===================================
+           タグ・バッジ
+           =================================== */
+        .tag {
+            display: inline-block;
+            padding: 0.2em 0.7em;
+            font-size: 0.8rem;
+            background: var(--color-bg-code);
+            color: var(--color-text-secondary);
+            border-radius: 999px;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .tag:hover { background: var(--color-primary); color: #fff; text-decoration: none; }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.2em 0.7em;
+            font-size: 0.8rem;
+            background: var(--color-primary);
+            color: #fff;
+            border-radius: 999px;
+            text-decoration: none;
+        }
+
+        /* ===================================
+           パンくずリスト
+           =================================== */
+        .breadcrumb {
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.85rem; color: var(--color-text-secondary);
+            margin-bottom: 1.5rem; flex-wrap: wrap;
+        }
+        .breadcrumb a { color: var(--color-text-secondary); }
+        .breadcrumb a:hover { color: var(--color-primary); }
+        .breadcrumb-separator { color: var(--color-text-light); }
+
+        /* ===================================
+           記事本文
+           =================================== */
+        .article-header { margin-bottom: 2rem; }
+        .article-title { font-size: 2rem; font-weight: 800; line-height: 1.3; margin-bottom: 0.75rem; }
+
+        .article-meta {
+            display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+            color: var(--color-text-secondary); font-size: 0.9rem;
+        }
+
+        .article-body { font-size: 1rem; line-height: 1.9; }
+        .article-body h2 { margin-top: 2.5rem; margin-bottom: 1rem; padding-bottom: 0.3em; border-bottom: 2px solid var(--color-primary); }
+        .article-body h3 { margin-top: 2rem; margin-bottom: 0.75rem; }
+        .article-body ul, .article-body ol { margin: 1em 0; padding-left: 1.5em; }
+        .article-body li { margin-bottom: 0.4em; }
+
+        /* 目次 */
+        .toc-container {
+            background: var(--color-bg-code);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-md);
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .toc-container .toc-title { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--color-primary); }
+        .toc-container ul { list-style: none; padding-left: 0; margin: 0; }
+        .toc-container li { margin-bottom: 0.3em; }
+        .toc-container ul ul { padding-left: 1.25em; }
+        .toc-container a { color: var(--color-text-secondary); font-size: 0.9rem; }
+        .toc-container a:hover { color: var(--color-primary); }
+
+        /* 読了時間バッジ */
+        .reading-time {
+            display: inline-block;
+            padding: 0.2em 0.7em;
+            font-size: 0.8rem;
+            background: #F5F3FF;
+            color: var(--color-primary);
+            border-radius: 999px;
+            font-weight: 600;
+        }
+
+        /* ===================================
+           SNSシェアボタン
+           =================================== */
+        .share-buttons { display: flex; gap: 0.75rem; margin: 2rem 0; flex-wrap: wrap; }
+
+        .share-btn {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.5em 1em; border-radius: var(--radius-sm);
+            font-size: 0.85rem; font-weight: 600; color: #fff;
+            text-decoration: none; transition: opacity 0.2s;
+        }
+        .share-btn:hover { opacity: 0.85; color: #fff; text-decoration: none; }
+        .share-btn-twitter { background: #1DA1F2; }
+        .share-btn-facebook { background: #1877F2; }
+        .share-btn-hatena { background: #00A4DE; }
+        .share-btn-line { background: #06C755; }
+
+        /* ===================================
+           ページネーション
+           =================================== */
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin: 2rem 0; }
+        .pagination a, .pagination span {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 40px; height: 40px; padding: 0 0.5em;
+            border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 500;
+            text-decoration: none; transition: background 0.2s, color 0.2s;
+        }
+        .pagination a { color: var(--color-text-secondary); background: var(--color-bg-card); border: 1px solid var(--color-border); }
+        .pagination a:hover { background: var(--color-primary); color: #fff; border-color: var(--color-primary); text-decoration: none; }
+        .pagination .current { background: var(--color-primary); color: #fff; border: 1px solid var(--color-primary); }
+
+        /* ===================================
+           サイドバー
+           =================================== */
+        .sidebar-widget {
+            background: var(--color-bg-card);
+            border: 1px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .sidebar-widget-title { font-size: 1rem; font-weight: 700; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--color-primary); }
+        .sidebar-category-list { list-style: none; padding: 0; }
+        .sidebar-category-list li { margin-bottom: 0.4rem; }
+        .sidebar-category-list a {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0.4rem 0; color: var(--color-text-secondary); font-size: 0.9rem;
+            border-bottom: 1px solid var(--color-border); text-decoration: none;
+        }
+        .sidebar-category-list a:hover { color: var(--color-primary); }
+        .sidebar-category-count { font-size: 0.8rem; background: var(--color-bg-code); padding: 0.15em 0.5em; border-radius: 999px; }
+
+        /* ===================================
+           フッター
+           =================================== */
+        .site-footer {
+            background: var(--color-bg-card);
+            border-top: 1px solid var(--color-border);
+            padding: 2rem 0;
+            margin-top: 3rem;
+        }
+        .footer-inner { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 2rem; }
+        .footer-section h4 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.75rem; color: var(--color-text); }
+        .footer-links { list-style: none; padding: 0; }
+        .footer-links li { margin-bottom: 0.3rem; }
+        .footer-links a { color: var(--color-text-secondary); font-size: 0.85rem; }
+        .footer-links a:hover { color: var(--color-primary); }
+        .footer-copyright {
+            text-align: center; margin-top: 2rem; padding-top: 1.5rem;
+            border-top: 1px solid var(--color-border); font-size: 0.85rem; color: var(--color-text-light);
+        }
+
+        /* ===================================
+           ユーティリティ
+           =================================== */
+        .text-center { text-align: center; }
+        .text-secondary { color: var(--color-text-secondary); }
+        .mt-1 { margin-top: 0.5rem; }
+        .mt-2 { margin-top: 1rem; }
+        .mt-3 { margin-top: 1.5rem; }
+        .mb-1 { margin-bottom: 0.5rem; }
+        .mb-2 { margin-bottom: 1rem; }
+        .mb-3 { margin-bottom: 1.5rem; }
+        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--color-text-secondary); }
+        .empty-state p { font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+    {# ===== ヘッダー ===== #}
+    <header class="site-header">
+        <div class="container header-inner">
+            <div class="site-logo">
+                <a href="{{ blog_url }}/index.html">{{ blog_name }}</a>
+            </div>
+
+            <button class="menu-toggle" aria-label="メニュー" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav class="site-nav" id="siteNav">
+                <a href="{{ blog_url }}/index.html">ホーム</a>
+                {% block nav_items %}{% endblock %}
+                <a href="{{ blog_url }}/feed.xml">RSS</a>
+            </nav>
+        </div>
+    </header>
+
+    {# ===== メインコンテンツ ===== #}
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 広告 -->
+    {{ adsense_article_ad }}
+
+    {# ===== フッター ===== #}
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-inner">
+                <div class="footer-section">
+                    <h4>{{ blog_name }}</h4>
+                    <p class="text-secondary" style="font-size: 0.85rem;">{{ blog_description }}</p>
+                </div>
+                <div class="footer-section">
+                    <h4>カテゴリ</h4>
+                    <ul class="footer-links">
+                        {% block footer_categories %}{% endblock %}
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>リンク</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ blog_url }}/sitemap.xml">サイトマップ</a></li>
+                        <li><a href="{{ blog_url }}/feed.xml">RSSフィード</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-copyright">
+                &copy; {{ "now" | default("2026") }} {{ blog_name }}. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() {
+            var nav = document.getElementById('siteNav');
+            nav.classList.toggle('open');
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var links = document.querySelectorAll('a[href^="http"]');
+            links.forEach(function(link) {
+                if (link.hostname !== window.location.hostname) {
+                    link.setAttribute('target', '_blank');
+                    link.setAttribute('rel', 'noopener noreferrer');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

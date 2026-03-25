@@ -1,0 +1,50 @@
+name: Quantum Brief 自動記事生成
+
+on:
+  schedule:
+    # 毎日 JST 8:00 (UTC 23:00 前日)
+    - cron: '0 23 * * *'
+    # 毎日 JST 12:00 (UTC 3:00)
+    - cron: '0 3 * * *'
+    # 毎日 JST 18:00 (UTC 9:00)
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+jobs:
+  generate-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: Python 3.12 をセットアップ
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: 依存パッケージをインストール
+        run: pip install -r requirements.txt
+
+      - name: 記事を自動生成してサイトをビルド
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python generate_and_build.py
+
+      - name: 生成した記事をコミット
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add output/
+          git diff --staged --quiet || git commit -m "記事自動生成: $(date '+%Y-%m-%d %H:%M')"
+          git push
+
+      - name: GitHub Pages にデプロイ
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./output/site
+          publish_branch: gh-pages

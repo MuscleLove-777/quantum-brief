@@ -1,0 +1,107 @@
+{# トップページテンプレート - 最新記事一覧 #}
+{% extends "base.html" %}
+
+{% block title %}{{ blog_name }} - {{ blog_description }}{% endblock %}
+
+{% block content %}
+<div class="layout-main">
+    {# メインコンテンツ: 記事カードリスト #}
+    <div class="content-area">
+        <h1 class="mb-2" style="font-size: 1.5rem;">最新の量子コンピューター論文要約</h1>
+
+        {% if articles %}
+            {% for article in articles %}
+            <div class="card">
+                <h2 class="card-title">
+                    <a href="{{ blog_url }}/articles/{{ article.slug }}.html">
+                        {{ article.title }}
+                    </a>
+                </h2>
+                <div class="card-meta">
+                    <span>{{ article.date }}</span>
+                    <span class="reading-time">3分で読める</span>
+                    {% if article.category %}
+                    <span>
+                        <a href="{{ blog_url }}/category/{{ article.category }}.html" class="category-badge">
+                            {{ article.category }}
+                        </a>
+                    </span>
+                    {% endif %}
+                </div>
+                {% if article.description %}
+                <p class="card-excerpt">{{ article.description }}</p>
+                {% endif %}
+                {% if article.tags %}
+                <div class="card-tags">
+                    {% for tag in article.tags %}
+                    <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <p>まだ記事がありません。</p>
+            </div>
+        {% endif %}
+
+        {# ページネーション #}
+        {% if total_pages > 1 %}
+        <nav class="pagination">
+            {% if current_page > 1 %}
+                {% if current_page == 2 %}
+                <a href="{{ blog_url }}/index.html">&laquo; 前へ</a>
+                {% else %}
+                <a href="{{ blog_url }}/page/{{ current_page - 1 }}.html">&laquo; 前へ</a>
+                {% endif %}
+            {% endif %}
+
+            {% for page_num in range(1, total_pages + 1) %}
+                {% if page_num == current_page %}
+                <span class="current">{{ page_num }}</span>
+                {% elif page_num == 1 %}
+                <a href="{{ blog_url }}/index.html">{{ page_num }}</a>
+                {% else %}
+                <a href="{{ blog_url }}/page/{{ page_num }}.html">{{ page_num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if current_page < total_pages %}
+            <a href="{{ blog_url }}/page/{{ current_page + 1 }}.html">次へ &raquo;</a>
+            {% endif %}
+        </nav>
+        {% endif %}
+    </div>
+
+    {# サイドバー: カテゴリ一覧 #}
+    <aside class="sidebar">
+        <div class="sidebar-widget">
+            <h3 class="sidebar-widget-title">カテゴリ</h3>
+            {% if categories %}
+            <ul class="sidebar-category-list">
+                {% for cat_name, cat_articles in categories.items() %}
+                <li>
+                    <a href="{{ blog_url }}/category/{{ cat_name }}.html">
+                        {{ cat_name }}
+                        <span class="sidebar-category-count">{{ cat_articles | length }}</span>
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p class="text-secondary" style="font-size: 0.9rem;">カテゴリはまだありません。</p>
+            {% endif %}
+        </div>
+
+        <div class="sidebar-widget">
+            <h3 class="sidebar-widget-title">このブログについて</h3>
+            <p class="text-secondary" style="font-size: 0.9rem; line-height: 1.7;">
+                {{ blog_description }}
+                <br><br>
+                海外の最新量子コンピューター論文を、忙しいビジネスマンが3分で読める日本語記事に要約してお届けします。
+            </p>
+        </div>
+    </aside>
+</div>
+{% endblock %}
