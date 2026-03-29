@@ -6,6 +6,7 @@ GitHub Actionsのワークフローから呼び出される。
 import json
 import logging
 import sys
+import time
 from datetime import datetime
 
 logging.basicConfig(
@@ -43,9 +44,27 @@ def main():
             '{"category": "カテゴリ名", "keyword": "キーワード"}'
         )
 
-        response = client.models.generate_content(
-            model=GEMINI_MODEL, contents=prompt
-        )
+        max_retries = 5
+        response = None
+        for attempt in range(max_retries):
+            try:
+                response = client.models.generate_content(
+                    model=GEMINI_MODEL, contents=prompt
+                )
+                break
+            except Exception as api_err:
+                err_str = str(api_err)
+                if "429" in err_str or "RESOURCE_EXHAUSTED" in err_str:
+                    wait_time = 60 * (attempt + 1)  # 60s, 120s, 180s, ...
+                    logger.warning(
+                        "レート制限エラー（試行 %d/%d）。%d秒後にリトライします...",
+                        attempt + 1, max_retries, wait_time,
+                    )
+                    time.sleep(wait_time)
+                else:
+                    raise
+        if response is None:
+            raise RuntimeError("レート制限エラーが続き、最大リトライ回数に達しました")
         response_text = response.text.strip()
 
         if "```" in response_text:
