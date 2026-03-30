@@ -17,13 +17,20 @@ jobs:
       - name: リポジトリをチェックアウト
         uses: actions/checkout@v4
 
+      - name: blog_engineをチェックアウト
+        uses: actions/checkout@v4
+        with:
+          repository: MuscleLove-777/blog-engine
+          path: blog_engine
+          token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Python 3.12 をセットアップ
         uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
       - name: 依存パッケージをインストール
-        run: pip install -r requirements.txt
+        run: pip install -r blog_engine/requirements.txt
 
       - name: 記事を自動生成してサイトをビルド
         env:
