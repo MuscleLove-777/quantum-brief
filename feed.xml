@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Quantum Brief</title>
+    <link>/quantum-brief</link>
+    <description>忙しいビジネスマンのための量子コンピューター論文要約ブログ</description>
+    <language>ja</language>
+    <lastBuildDate>Wed, 01 Apr 2026 23:14:29 +0900</lastBuildDate>
+    <atom:link href="/quantum-brief/feed.xml" rel="self" type="application/rss+xml"/>
+    <item>
+      <title>未来を拓く！量子機械学習が変えるビジネス最前線</title>
+      <link>/quantum-brief/articles/quantum-machine-learning-business-impact.html</link>
+      <guid>/quantum-brief/articles/quantum-machine-learning-business-impact.html</guid>
+      <description></description>
+      <category>量子×ビジネス応用</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>量子コンピューター最新動向：未来を掴む3分解説</title>
+      <link>/quantum-brief/articles/quantum-computer-latest-trends.html</link>
+      <guid>/quantum-brief/articles/quantum-computer-latest-trends.html</guid>
+      <description></description>
+      <category>量子コンピューティング基礎</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>未来を拓く量子最適化！ビジネスの効率を劇的に変える</title>
+      <link>/quantum-brief/articles/quantum-optimization-business-impact.html</link>
+      <guid>/quantum-brief/articles/quantum-optimization-business-impact.html</guid>
+      <description></description>
+      <category>量子×ビジネス応用</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>量子AIがビジネスを変革！最新動向とチャンス</title>
+      <link>/quantum-brief/articles/quantum-ai-business-trends.html</link>
+      <guid>/quantum-brief/articles/quantum-ai-business-trends.html</guid>
+      <description></description>
+      <category>量子×ビジネス応用</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>量子時代の盾！耐量子暗号の最前線とビジネス戦略</title>
+      <link>/quantum-brief/articles/tairyoshi-ango-saizensen.html</link>
+      <guid>/quantum-brief/articles/tairyoshi-ango-saizensen.html</guid>
+      <description></description>
+      <category>量子暗号・セキュリティ</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>量子脅威からビジネスを守る！耐量子暗号の最前線</title>
+      <link>/quantum-brief/articles/quantum-threat-post-quantum-cryptography.html</link>
+      <guid>/quantum-brief/articles/quantum-threat-post-quantum-cryptography.html</guid>
+      <description></description>
+      <category>量子暗号・セキュリティ</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>量子AIがビジネスを変える！最前線とチャンス</title>
+      <link>/quantum-brief/articles/quantum-ai-business-frontiers.html</link>
+      <guid>/quantum-brief/articles/quantum-ai-business-frontiers.html</guid>
+      <description></description>
+      <category>量子×ビジネス応用</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>最速で富を掴む！量子金融の最新動向</title>
+      <link>/quantum-brief/articles/quantum-finance-latest-trends.html</link>
+      <guid>/quantum-brief/articles/quantum-finance-latest-trends.html</guid>
+      <description></description>
+      <category>量子×ビジネス応用</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>量子ハッキング対策の切り札！耐量子暗号の最前線</title>
+      <link>/quantum-brief/articles/post-quantum-cryptography-latest-trends.html</link>
+      <guid>/quantum-brief/articles/post-quantum-cryptography-latest-trends.html</guid>
+      <description></description>
+      <category>量子暗号・セキュリティ</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>量子AI最前線：ビジネスを加速する次世代技術</title>
+      <link>/quantum-brief/articles/quantum-ai-business-impact.html</link>
+      <guid>/quantum-brief/articles/quantum-ai-business-impact.html</guid>
+      <description></description>
+      <category>量子×ビジネス応用</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>「耐量子暗号 移行」最前線：量子時代を生き抜く鍵</title>
+      <link>/quantum-brief/articles/post-quantum-cryptography-migration-2024.html</link>
+      <guid>/quantum-brief/articles/post-quantum-cryptography-migration-2024.html</guid>
+      <description></description>
+      <category>量子暗号・セキュリティ</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>未来の防衛戦略！耐量子暗号でビジネスを守る</title>
+      <link>/quantum-brief/articles/post-quantum-cryptography-business-strategy.html</link>
+      <guid>/quantum-brief/articles/post-quantum-cryptography-business-strategy.html</guid>
+      <description></description>
+      <category>量子暗号・セキュリティ</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>量子脅威に備えよ！ビジネスを守る「耐量子暗号」最前線</title>
+      <link>/quantum-brief/articles/post-quantum-cryptography-business-impact.html</link>
+      <guid>/quantum-brief/articles/post-quantum-cryptography-business-impact.html</guid>
+      <description></description>
+      <category>量子暗号・セキュリティ</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>クラウド量子コンピューティングサービス最前線</title>
+      <link>/quantum-brief/articles/cloud-quantum-computing-services-business-trends.html</link>
+      <guid>/quantum-brief/articles/cloud-quantum-computing-services-business-trends.html</guid>
+      <description></description>
+      <category>量子×ビジネス応用</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>「耐量子暗号」最前線：量子ハッキングから資産を守る</title>
+      <link>/quantum-brief/articles/post-quantum-cryptography-business-impact.html</link>
+      <guid>/quantum-brief/articles/post-quantum-cryptography-business-impact.html</guid>
+      <description></description>
+      <category>量子暗号・セキュリティ</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+    <item>
+      <title>【3分で理解】量子最適化が拓くビジネスの新時代</title>
+      <link>/quantum-brief/articles/quantum-optimization-business-impact.html</link>
+      <guid>/quantum-brief/articles/quantum-optimization-business-impact.html</guid>
+      <description></description>
+      <category>量子×ビジネス応用</category>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0900</pubDate>
+    </item>
+  </channel>
+</rss>
