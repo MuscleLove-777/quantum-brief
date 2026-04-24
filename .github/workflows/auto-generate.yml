@@ -52,6 +52,11 @@ jobs:
 
       - uses: actions/configure-pages@v5
 
+      # --- llms-txt-injector ---
+      - name: llms.txt を output/site に配置（AI検索エンジン対応）
+        run: |
+          mkdir -p output/site
+          if [ -f llms.txt ]; then cp llms.txt output/site/llms.txt; fi
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./output/site
