@@ -14,6 +14,7 @@ import argparse
 import json
 import logging
 import sys
+from llm import get_llm_client
 
 # ログ設定
 logging.basicConfig(

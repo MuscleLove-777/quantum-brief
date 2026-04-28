@@ -18,7 +18,7 @@ class KeywordResearcher:
 
     def __init__(self):
         """Geminiクライアントを初期化する"""
-        self.client = genai.Client(api_key=GEMINI_API_KEY)
+        self.client = get_llm_client(__import__('types').SimpleNamespace(GEMINI_API_KEY=GEMINI_API_KEY))
         self.model_name = GEMINI_MODEL
         logger.info("KeywordResearcher を初期化しました")
 

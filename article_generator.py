@@ -31,11 +31,6 @@ class ArticleGenerator:
         Raises:
             ValueError: APIキーが未設定の場合
         """
-        if not config.GEMINI_API_KEY:
-            raise ValueError(
-                "GEMINI_API_KEY が設定されていません。"
-                "環境変数 GEMINI_API_KEY を設定してください。"
-            )
 
         self.client = get_llm_client(config)
         self.model_name = config.GEMINI_MODEL
