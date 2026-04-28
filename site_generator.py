@@ -27,7 +27,7 @@ class SiteGenerator:
     """静的サイト生成クラス"""
 
     # 1ページあたりの記事数（ページネーション用）
-    ARTICLES_PER_PAGE = 10
+    ARTICLES_PER_PAGE = 50
 
     def __init__(self):
         """Jinja2テンプレート環境と出力ディレクトリの初期化"""
