@@ -24,7 +24,7 @@ def main():
     # ステップ1: キーワード選定
     logger.info("ステップ1: キーワード選定")
     try:
-        from google import genai
+        from llm import get_llm_client
         from config import GEMINI_API_KEY, GEMINI_MODEL, TARGET_CATEGORIES
 
         if not GEMINI_API_KEY:

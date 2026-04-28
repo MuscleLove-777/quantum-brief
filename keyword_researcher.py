@@ -7,8 +7,7 @@ import json
 import logging
 from datetime import datetime, timedelta
 
-from google import genai
-
+from llm import get_llm_client
 from config import GEMINI_API_KEY, GEMINI_MODEL, TARGET_CATEGORIES
 
 logger = logging.getLogger(__name__)
