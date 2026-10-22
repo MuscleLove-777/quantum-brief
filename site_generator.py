@@ -7,6 +7,7 @@ Jinja2テンプレートを使って静的HTMLサイトを生成する。
 import json
 import math
 import shutil
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -51,9 +52,55 @@ class SiteGenerator:
     # メインビルド
     # ------------------------------------------------------------------
 
+    @staticmethod
+    def _validate_slug(slug):
+        """記事のファイル名は日本語を含む単一componentだけを許可する。"""
+        if (not isinstance(slug, str) or not slug or slug in {".", ".."}
+                or slug[-1] in ". " or any(ord(c) < 32 for c in slug)
+                or any(c in slug for c in '/\\:<>"|?*')
+                or re.fullmatch(r"(?:CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])", slug.split(".")[0], re.I)):
+            raise ValueError("Invalid article slug")
+        # 配備先の255-byte componentとWindowsの255 UTF-16 unitsの両方に収める。
+        filename = slug + ".html"
+        try:
+            too_long = len(filename.encode("utf-8")) > 255 or len(filename.encode("utf-16-le")) > 510
+        except UnicodeError:
+            raise ValueError("Invalid article slug encoding") from None
+        if too_long:
+            raise ValueError("Article filename is too long")
+        return slug
+
+    def _article_output_path(self, slug):
+        slug = self._validate_slug(slug)
+        root = Path(self.output_dir).absolute()
+        directory = root / "articles"
+        target = directory / (slug + ".html")
+        for candidate in (root, directory, target):
+            if candidate.exists() or candidate.is_symlink():
+                stat = candidate.lstat()
+                if candidate.is_symlink() or getattr(stat, "st_file_attributes", 0) & 0x400:
+                    raise ValueError("Linked article output is not allowed")
+                if candidate == target and (not candidate.is_file() or stat.st_nlink != 1):
+                    raise ValueError("Invalid article output")
+        if directory.resolve().parent != root.resolve() or target.resolve().parent != directory.resolve():
+            raise ValueError("Article output escapes its directory")
+        return target
+
+
     def build_site(self):
         """全記事を読み込んで静的サイトを一括生成する"""
         print(f"[サイト生成] 開始 - 出力先: {self.output_dir}")
+
+        # Validate every slug and existing output link before clearing the old build.
+        articles = self._load_articles()
+        names = set()
+        for article in articles:
+            slug = article.get("slug", article.get("id", "untitled"))
+            self._article_output_path(slug)
+            key = slug.casefold()
+            if key in names:
+                raise ValueError("Duplicate article slug")
+            names.add(key)
 
         if self.output_dir.exists():
             shutil.rmtree(self.output_dir)
@@ -63,7 +110,6 @@ class SiteGenerator:
         (self.output_dir / "category").mkdir(parents=True, exist_ok=True)
 
         # ---- 記事の読み込み ----
-        articles = self._load_articles()
         if not articles:
             print("[サイト生成] 記事が見つかりません。空のサイトを生成します。")
 
@@ -75,8 +121,9 @@ class SiteGenerator:
         for article in articles:
             html = self._render_article(article)
             slug = article.get("slug", article.get("id", "untitled"))
-            output_path = self.output_dir / "articles" / f"{slug}.html"
-            output_path.write_text(html, encoding="utf-8")
+            output_path = self._article_output_path(slug)
+            with output_path.open("x", encoding="utf-8") as output:
+                output.write(html)
             print(f"  記事生成: {slug}.html")
 
         # ---- インデックスページの生成（ページネーション対応） ----

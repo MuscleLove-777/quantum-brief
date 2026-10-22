@@ -4,6 +4,8 @@ FastAPIベースの管理画面。記事管理・統計・設定の閲覧が可�
 """
 
 import json
+from html import escape
+from urllib.parse import quote
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -353,6 +355,14 @@ CSS = """
 </style>
 """
 
+def _text(value) -> str:
+    return escape(str(value), quote=True)
+
+
+def _url_component(value) -> str:
+    return quote(str(value), safe="")
+
+
 def _sidebar(active: str = "") -> str:
     """サイドバーナビゲーションを生成"""
     links = [
@@ -366,7 +376,7 @@ def _sidebar(active: str = "") -> str:
         items += f'<a href="{href}"{cls}>{label}</a>\n'
     return f"""
     <nav class="sidebar">
-        <h1>{BLOG_NAME}</h1>
+        <h1>{_text(BLOG_NAME)}</h1>
         {items}
     </nav>
     """
@@ -379,7 +389,7 @@ def _base(title: str, content: str, active: str = "") -> str:
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{title} | {BLOG_NAME} 管理</title>
+    <title>{_text(title)} | {_text(BLOG_NAME)} 管理</title>
     {CSS}
 </head>
 <body>
@@ -409,7 +419,7 @@ async def dashboard_top():
     for cat, cnt in cat_counts.items():
         cat_cards += f"""
         <div class="card">
-            <div class="card-label">{cat}</div>
+            <div class="card-label">{_text(cat)}</div>
             <div class="card-value">{cnt}</div>
             <div class="card-sub">記事</div>
         </div>"""
@@ -425,12 +435,12 @@ async def dashboard_top():
         seo_pct = min(int(seo), 100)
         rows += f"""
         <tr>
-            <td>{created}</td>
-            <td><a href="/articles/{slug}">{title}</a></td>
-            <td><span class="badge">{cat}</span></td>
+            <td>{_text(created)}</td>
+            <td><a href="/articles/{_url_component(slug)}">{_text(title)}</a></td>
+            <td><span class="badge">{_text(cat)}</span></td>
             <td>
                 <span class="score-bar"><span class="score-bar-fill" style="width:{seo_pct}%"></span></span>
-                {seo}
+                {_text(seo)}
             </td>
         </tr>"""
 
@@ -485,7 +495,7 @@ async def articles_list(category: Optional[str] = Query(None)):
     filter_links = f'<a href="/articles" class="{"active" if not category else ""}">すべて</a>\n'
     for cat in all_cats:
         active_cls = "active" if category == cat else ""
-        filter_links += f'<a href="/articles?category={cat}" class="{active_cls}">{cat}</a>\n'
+        filter_links += f'<a href="/articles?category={_url_component(cat)}" class="{active_cls}">{_text(cat)}</a>\n'
 
     rows = ""
     for a in articles:
@@ -497,12 +507,12 @@ async def articles_list(category: Optional[str] = Query(None)):
         seo_pct = min(int(seo), 100)
         rows += f"""
         <tr>
-            <td>{created}</td>
-            <td><a href="/articles/{slug}">{title}</a></td>
-            <td><span class="badge">{cat}</span></td>
+            <td>{_text(created)}</td>
+            <td><a href="/articles/{_url_component(slug)}">{_text(title)}</a></td>
+            <td><span class="badge">{_text(cat)}</span></td>
             <td>
                 <span class="score-bar"><span class="score-bar-fill" style="width:{seo_pct}%"></span></span>
-                {seo}
+                {_text(seo)}
             </td>
         </tr>"""
 
@@ -553,11 +563,11 @@ async def article_detail(slug: str):
     seo_color = "#22C55E" if seo_score >= 80 else "#EAB308" if seo_score >= 60 else "#EF4444"
 
     content = f"""
-    <h1 class="page-title">{title}</h1>
+    <h1 class="page-title">{_text(title)}</h1>
     <div class="cards">
         <div class="card">
             <div class="card-label">SEOスコア</div>
-            <div class="card-value" style="color:{seo_color}">{seo_score}</div>
+            <div class="card-value" style="color:{seo_color}">{_text(seo_score)}</div>
             <div class="card-sub">/ 100</div>
         </div>
         <div class="card">
@@ -572,22 +582,22 @@ async def article_detail(slug: str):
         </div>
         <div class="card">
             <div class="card-label">キーワード密度</div>
-            <div class="card-value" style="font-size:24px;">{keyword_density}%</div>
+            <div class="card-value" style="font-size:24px;">{_text(keyword_density)}%</div>
             <div class="card-sub">目標: {MIN_KEYWORD_DENSITY}〜{MAX_KEYWORD_DENSITY}%</div>
         </div>
     </div>
     <div class="table-wrap">
         <h2>メタ情報</h2>
         <div class="meta-grid">
-            <div class="meta-item"><dt>カテゴリ</dt><dd>{category}</dd></div>
-            <div class="meta-item"><dt>ターゲットキーワード</dt><dd>{keyword}</dd></div>
-            <div class="meta-item"><dt>作成日時</dt><dd>{created}</dd></div>
-            <div class="meta-item"><dt>スラッグ</dt><dd>{slug}</dd></div>
+            <div class="meta-item"><dt>カテゴリ</dt><dd>{_text(category)}</dd></div>
+            <div class="meta-item"><dt>ターゲットキーワード</dt><dd>{_text(keyword)}</dd></div>
+            <div class="meta-item"><dt>作成日時</dt><dd>{_text(created)}</dd></div>
+            <div class="meta-item"><dt>スラッグ</dt><dd>{_text(slug)}</dd></div>
         </div>
     </div>
     <div class="table-wrap">
         <h2>メタディスクリプション</h2>
-        <p style="color:#64748B;font-size:14px;line-height:1.6;">{meta_desc}</p>
+        <p style="color:#64748B;font-size:14px;line-height:1.6;">{_text(meta_desc)}</p>
         <p style="font-size:12px;color:#94A3B8;margin-top:8px;">{len(meta_desc)} 文字（推奨: {META_DESCRIPTION_LENGTH}文字以内）</p>
     </div>
     <div class="article-content">
@@ -611,16 +621,16 @@ async def settings_page():
     <div class="settings-grid">
         <div class="setting-group">
             <h3>ブログ基本設定</h3>
-            <div class="setting-row"><span class="label">ブログ名</span><span class="value">{BLOG_NAME}</span></div>
-            <div class="setting-row"><span class="label">説明</span><span class="value">{BLOG_DESCRIPTION}</span></div>
-            <div class="setting-row"><span class="label">URL</span><span class="value">{BLOG_URL}</span></div>
-            <div class="setting-row"><span class="label">言語</span><span class="value">{BLOG_LANGUAGE}</span></div>
+            <div class="setting-row"><span class="label">ブログ名</span><span class="value">{_text(BLOG_NAME)}</span></div>
+            <div class="setting-row"><span class="label">説明</span><span class="value">{_text(BLOG_DESCRIPTION)}</span></div>
+            <div class="setting-row"><span class="label">URL</span><span class="value">{_text(BLOG_URL)}</span></div>
+            <div class="setting-row"><span class="label">言語</span><span class="value">{_text(BLOG_LANGUAGE)}</span></div>
         </div>
         <div class="setting-group">
             <h3>記事生成設定</h3>
             <div class="setting-row"><span class="label">文字数目安</span><span class="value">{MAX_ARTICLE_LENGTH:,} 文字</span></div>
             <div class="setting-row"><span class="label">1日の記事数</span><span class="value">{ARTICLES_PER_DAY} 記事</span></div>
-            <div class="setting-row"><span class="label">対象カテゴリ</span><span class="value">{cats_list}</span></div>
+            <div class="setting-row"><span class="label">対象カテゴリ</span><span class="value">{_text(cats_list)}</span></div>
         </div>
         <div class="setting-group">
             <h3>SEO設定</h3>
@@ -630,9 +640,9 @@ async def settings_page():
         </div>
         <div class="setting-group">
             <h3>スケジューラー設定</h3>
-            <div class="setting-row"><span class="label">投稿スケジュール</span><span class="value">{hours_list}</span></div>
-            <div class="setting-row"><span class="label">ダッシュボードホスト</span><span class="value">{DASHBOARD_HOST}</span></div>
-            <div class="setting-row"><span class="label">ダッシュボードポート</span><span class="value">{DASHBOARD_PORT}</span></div>
+            <div class="setting-row"><span class="label">投稿スケジュール</span><span class="value">{_text(hours_list)}</span></div>
+            <div class="setting-row"><span class="label">ダッシュボードホスト</span><span class="value">{_text(DASHBOARD_HOST)}</span></div>
+            <div class="setting-row"><span class="label">ダッシュボードポート</span><span class="value">{_text(DASHBOARD_PORT)}</span></div>
         </div>
     </div>
     """
@@ -731,7 +741,7 @@ def _markdown_to_html(text: str) -> str:
     """簡易Markdown→HTML変換（記事プレビュー用）"""
     import re
 
-    lines = text.split("\n")
+    lines = escape(str(text), quote=True).split("\n")
     html_lines = []
     in_list = False
 
