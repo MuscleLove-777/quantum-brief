@@ -53,15 +53,17 @@ jobs:
       - name: llms.txt を output/site に配置（AI検索エンジン対応）
         run: |
           mkdir -p output/site
-          if [ -f llms.txt ]; then cp llms.txt output/site/llms.txt; fi
+          if [ -f llms.txt ] && [ ! -f output/site/llms.txt ]; then cp llms.txt output/site/llms.txt; fi
       - name: Ensure robots.txt
         run: |
           mkdir -p output/site
+          if [ ! -f output/site/robots.txt ]; then
           cat > output/site/robots.txt <<'EOF'
           User-agent: *
           Allow: /
           Sitemap: https://musclelove-777.github.io/quantum-brief/sitemap.xml
           EOF
+          fi
       - name: Apply MuscleLove brand to every page
         run: |
           python -m pip install beautifulsoup4==4.15.0
